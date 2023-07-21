@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -39,7 +40,7 @@ func main() {
 			}
 		}
 	}))
-	go app.Listen("192.168.64.19:8080")
+	go app.Listen(fmt.Sprintf("%s:%s", os.Getenv("HOST"), os.Getenv("PORT")))
 	<-interruptChannel()
 }
 
