@@ -40,10 +40,17 @@ func main() {
 		ch.AddConnToRoom(room, c)
 		for {
 			typ, msg, err := c.ReadMessage()
-			logger.Println("Client", c.RemoteAddr(), "sent", string(msg), "to room", room)
-			if err != nil { break }
-			for _, wsc := range ch.RoomConns(room) {
-				wsc.WriteMessage(typ, msg)
+			if (err != nil) {
+				if websocket.IsUnexpectedCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway) {
+					logger.Println("Error reading message:", err)
+				}
+				break
+			}
+			if (typ == websocket.BinaryMessage) || (typ == websocket.TextMessage) {
+				logger.Println("Client", c.RemoteAddr(), "sent", string(msg), "to room", room)
+				for _, wsc := range ch.RoomConns(room) {
+					wsc.WriteMessage(typ, msg)
+				}
 			}
 		}
 	}))
