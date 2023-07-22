@@ -22,6 +22,13 @@ func main() {
 	defer app.Shutdown()
 	ch := chat.NewChat()
 	logger := log.Default()
+	app.Get("/rooms", func(c *fiber.Ctx) error {
+		res := make([]chat.ChatRoom, 0, len(ch))
+		for roomName, conns := range ch {
+			res = append(res, chat.ChatRoom{ Name: roomName, Size: len(conns.Items()) })
+		}
+		return c.JSON(res)
+	})
 	app.Get("/:room/ws", websocket.New(func(c *websocket.Conn) {
 		room := c.Params("room")
 		logger.Println("Client", c.RemoteAddr(), "connected to room", room)
