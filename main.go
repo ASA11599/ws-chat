@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/ASA11599/ws-chat/chat"
+	"github.com/ASA11599/ws-chat/internal/chat"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
 )

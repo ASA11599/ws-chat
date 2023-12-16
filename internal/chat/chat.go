@@ -1,7 +1,7 @@
 package chat
 
 import (
-	"github.com/ASA11599/ws-chat/set"
+	"github.com/ASA11599/ws-chat/internal/set"
 	"github.com/gofiber/websocket/v2"
 )
 
