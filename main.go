@@ -23,11 +23,7 @@ func main() {
 	ch := chat.NewChat()
 	logger := log.Default()
 	app.Get("/rooms", func(c *fiber.Ctx) error {
-		res := make([]chat.ChatRoom, 0, len(ch))
-		for roomName, conns := range ch {
-			res = append(res, chat.ChatRoom{ Name: roomName, Size: len(conns.Items()) })
-		}
-		return c.JSON(res)
+		return c.JSON(ch.Rooms())
 	})
 	app.Get("/:room/ws", websocket.New(func(c *websocket.Conn) {
 		room := c.Params("room")
@@ -41,16 +37,14 @@ func main() {
 		for {
 			typ, msg, err := c.ReadMessage()
 			if (err != nil) {
-				if websocket.IsUnexpectedCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway) {
+				if websocket.IsUnexpectedCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway, websocket.CloseNoStatusReceived) {
 					logger.Println("Error reading message:", err)
 				}
 				break
 			}
 			if (typ == websocket.BinaryMessage) || (typ == websocket.TextMessage) {
 				logger.Println("Client", c.RemoteAddr(), "sent", string(msg), "to room", room)
-				for _, wsc := range ch.RoomConns(room) {
-					wsc.WriteMessage(typ, msg)
-				}
+				ch.Broadcast(typ, msg, room)
 			}
 		}
 	}))
