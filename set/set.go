@@ -5,4 +5,5 @@ type Set[T comparable] interface {
 	Contains(T) bool
 	Delete(T)
 	Items() []T
+	Size() int
 }

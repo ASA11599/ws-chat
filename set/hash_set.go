@@ -29,3 +29,7 @@ func (hs *HashSet[T]) Items() []T {
 	}
 	return items
 }
+
+func (hs *HashSet[T]) Size() int {
+	return len(hs.m)
+}
