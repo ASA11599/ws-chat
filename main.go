@@ -30,10 +30,10 @@ func main() {
 		logger.Println("Client", c.RemoteAddr(), "connected to room", room)
 		defer func() {
 			logger.Println("Client", c.RemoteAddr(), "disconnected from room", room)
-			ch.DeleteConnFromRoom(room, c)
+			ch.DeleteConnFromRoom(room, chat.NewWSChatConnection(c))
 			c.Close()
 		}()
-		ch.AddConnToRoom(room, c)
+		ch.AddConnToRoom(room, chat.NewWSChatConnection(c))
 		for {
 			typ, msg, err := c.ReadMessage()
 			if (err != nil) {
@@ -44,7 +44,7 @@ func main() {
 			}
 			if (typ == websocket.BinaryMessage) || (typ == websocket.TextMessage) {
 				logger.Println("Client", c.RemoteAddr(), "sent", string(msg), "to room", room)
-				ch.Broadcast(typ, msg, room)
+				ch.Broadcast(msg, room)
 			}
 		}
 	}))
