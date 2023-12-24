@@ -24,14 +24,21 @@ func (c *Chat) AddConnToRoom(room string, conn ChatConnection) {
 
 func (c *Chat) DeleteConnFromRoom(room string, conn ChatConnection) {
 	conns, ok := c.roomConnections[room]
-	if ok { conns.Delete(conn) }
-	if c.roomConnections[room].Size() == 0 {
-		delete(c.roomConnections, room)
+	if ok {
+		conns.Delete(conn)
+		if conns.Size() == 0 {
+			delete(c.roomConnections, room)
+		}
 	}
 }
 
-func (c *Chat) RoomConns(room string) []ChatConnection {
-	return c.roomConnections[room].Items()
+func (c *Chat) roomConns(room string) []ChatConnection {
+	conns, ok := c.roomConnections[room]
+	if ok {
+		return conns.Items()
+	} else {
+		return nil
+	}
 }
 
 func (c *Chat) Rooms() []ChatRoom {
@@ -43,7 +50,7 @@ func (c *Chat) Rooms() []ChatRoom {
 }
 
 func (c *Chat) Broadcast(m []byte, room string) {
-	for _, conn := range c.RoomConns(room) {
+	for _, conn := range c.roomConns(room) {
 		conn.Write(m)
 	}
 }
