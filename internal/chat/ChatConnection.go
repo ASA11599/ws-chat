@@ -10,12 +10,12 @@ type WSChatConnection struct {
 	wsConn *websocket.Conn
 }
 
-func NewWSChatConnection(wsc *websocket.Conn) *WSChatConnection {
-	return &WSChatConnection{
+func NewWSChatConnection(wsc *websocket.Conn) WSChatConnection {
+	return WSChatConnection{
 		wsConn: wsc,
 	}
 }
 
-func (wscc *WSChatConnection) Write(msg []byte) error {
+func (wscc WSChatConnection) Write(msg []byte) error {
 	return wscc.wsConn.WriteMessage(websocket.TextMessage, msg)
 }
